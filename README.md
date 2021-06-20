@@ -12,7 +12,7 @@ Exporter Prometheus des statistiques de récupération d'image sur Docker Hub.
 | DOCKERHUB_LIMIT_EXPORTER_NAME | Valeur 'job' des métriques remontées | dockerhub-limit-exporter |
 | DOCKERHUB_LIMIT__EXPORTER_PORT | Port d'écoute de l'exporter | 8123 |
 | HTTP_PROXY | Proxy HTTP  | Vide |
-| HTTPS_PROXY | PROXY_HTTPS  | Vide |
+| HTTPS_PROXY | Proxy HTTPS  | Vide |
 
 ## Format des métriques
 
