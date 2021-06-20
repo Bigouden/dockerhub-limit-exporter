@@ -129,7 +129,7 @@ if __name__ == '__main__':
     logging.debug("DOCKERHUB_LIMIT_EXPORTER_NAME: %s.", DOCKERHUB_LIMIT_EXPORTER_NAME)
     if DOCKERHUB_USERNAME and DOCKERHUB_PASSWORD:
         logging.info("Mode : LOGIN.")
-    else
+    else:
         logging.info("Mode : ANONYMOUS.")
     # Start Prometheus HTTP Server
     start_http_server(DOCKERHUB_LIMIT_EXPORTER_PORT)
