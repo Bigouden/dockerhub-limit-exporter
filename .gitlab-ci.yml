@@ -1,0 +1,22 @@
+include:
+  - project: 'Bigouden/gitlab-ci-templates'
+    file: '.gitlab-ci-docker.yml'
+
+variables:
+  CONTAINER_CLIENT_IMAGE: alpine:latest
+
+stages:
+  - Quality
+  - Build
+  - Inspect
+  - Release
+
+Pylint:
+  stage: Quality
+  image: $CONTAINER_CLIENT_IMAGE
+  before_script:
+    - apk add --no-cache --update git py3-pip
+    - pip install pylint
+  script:
+    - pylint dockerhub_limit_exporter.py
+  retry: 2
