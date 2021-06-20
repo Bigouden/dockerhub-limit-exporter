@@ -83,14 +83,12 @@ class DockerHubLimitCollector():
     def _get_token():
         '''Get Docker Hub Token'''
         if DOCKERHUB_USERNAME and DOCKERHUB_PASSWORD:
-            logging.info("MODE : LOGIN.")
             auth = (DOCKERHUB_USERNAME.lower(), DOCKERHUB_PASSWORD)
             request = requests.get(TOKEN_URL, auth=auth)
             if request.status_code == 401:
                 logging.error("Invalid Docker Hub Credentials !")
                 sys.exit(1)
         else:
-            logging.info("MODE : ANONYMOUS.")
             request = requests.get(TOKEN_URL)
         token = request.json()['token']
         logging.debug("TOKEN : %s", token)
@@ -129,6 +127,10 @@ if __name__ == '__main__':
     logging.info("Starting Docker Hub Limit Exporter on port %s.", DOCKERHUB_LIMIT_EXPORTER_PORT)
     logging.debug("DOCKERHUB_LIMIT_EXPORTER_PORT: %s.", DOCKERHUB_LIMIT_EXPORTER_PORT)
     logging.debug("DOCKERHUB_LIMIT_EXPORTER_NAME: %s.", DOCKERHUB_LIMIT_EXPORTER_NAME)
+    if DOCKERHUB_USERNAME and DOCKERHUB_PASSWORD:
+        logging.info("Mode : LOGIN.")
+    else:
+        logging.info("Mode : ANONYMOUS.")
     # Start Prometheus HTTP Server
     start_http_server(DOCKERHUB_LIMIT_EXPORTER_PORT)
     # Init LinkyCollector
