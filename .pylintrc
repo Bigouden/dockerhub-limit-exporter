@@ -1,3 +1,8 @@
 [FORMAT]
 max-line-length=150
 
+[MESSAGES CONTROL]
+disable=import-error
+disable=protected-access
+
+
