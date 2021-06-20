@@ -2,7 +2,7 @@
 
 ## Description
 
-Exporter Prometheus des statistiques de récupération d'image sur Docker Hub.
+Exporter Prometheus des statistiques de récupération d'images sur Docker Hub.
 
 ## Variable d'environement
 
@@ -25,7 +25,7 @@ Les métriques remontées par l'exporter sont toutes préfixées par la chaine d
 dockerhub_ratelimit_limit{job="dockerhub-limit-exporter",ratelimit_limit_interval="21600",ratelimit_remaining_interval="21600"} 100.0
 # HELP dockerhub_ratelimit_remaining number of pulls remaining for the six hour rolling window
 # TYPE dockerhub_ratelimit_remaining gauge
-dockerhub_ratelimit_remaining{job="dockerhub-limit-exporter",ratelimit_limit_interval="21600",ratelimit_remaining_interval="21600"} 100.0
+dockerhub_ratelimit_remaining{job="dockerhub-limit-exporter",ratelimit_limit_interval="21600",ratelimit_remaining_interval="21600"} 90.0
 ```
 
 ## Lancement de l'exporter
@@ -34,7 +34,7 @@ L'exporter est "packagé" sous forme de conteneur Docker.
 
 Une fois le conteneur construit, il peut être lancé comme suit :
 
-`docker run -dit -p 8123:8123 dockerhub-limit -exporter`
+`docker run -dit -p 8123:8123 dockerhub-limit-exporter`
 
 ## Tableau de bord Grafana
 
