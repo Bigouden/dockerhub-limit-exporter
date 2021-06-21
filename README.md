@@ -22,10 +22,10 @@ Les métriques remontées par l'exporter sont toutes préfixées par la chaine d
 ```bash
 # HELP dockerhub_ratelimit_limit total number of pulls that can be performed within a six hour window
 # TYPE dockerhub_ratelimit_limit gauge
-dockerhub_ratelimit_limit{job="dockerhub-limit-exporter",ratelimit_limit_interval="21600",ratelimit_remaining_interval="21600"} 100.0
+dockerhub_ratelimit_limit{dockerhub_username="bigouden",job="dockerhub-limit-exporter",ratelimit_limit_interval="21600",ratelimit_remaining_interval="21600"} 200.0
 # HELP dockerhub_ratelimit_remaining number of pulls remaining for the six hour rolling window
 # TYPE dockerhub_ratelimit_remaining gauge
-dockerhub_ratelimit_remaining{job="dockerhub-limit-exporter",ratelimit_limit_interval="21600",ratelimit_remaining_interval="21600"} 90.0
+dockerhub_ratelimit_remaining{dockerhub_username="bigouden",job="dockerhub-limit-exporter",ratelimit_limit_interval="21600",ratelimit_remaining_interval="21600"} 189.0
 ```
 
 ## Lancement de l'exporter

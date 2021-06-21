@@ -64,7 +64,6 @@ class DockerHubLimitCollector():
     def __init__(self):
         return
 
-
     def get_limits(self):
         '''Get Docker Hub Limits'''
         limits = {}
@@ -78,27 +77,6 @@ class DockerHubLimitCollector():
                 limits['%s-interval' % key] = interval
         logging.info(limits)
         return limits
-
-    @staticmethod
-    def _get_token():
-        '''Get Docker Hub Token'''
-        if DOCKERHUB_USERNAME and DOCKERHUB_PASSWORD:
-            auth = (DOCKERHUB_USERNAME.lower(), DOCKERHUB_PASSWORD)
-            request = requests.get(TOKEN_URL, auth=auth)
-            if request.status_code == 401:
-                logging.error("Invalid Docker Hub Credentials !")
-                sys.exit(1)
-        else:
-            request = requests.get(TOKEN_URL)
-        token = request.json()['token']
-        logging.debug("TOKEN : %s", token)
-        return token
-
-    @staticmethod
-    def _parse_limit(value):
-        '''Extract Limit & Interval From Header'''
-        limit, interval = value.split(';')
-        return limit, interval.replace('w=', '')
 
     def collect(self):
         '''Collect Prometheus Metrics'''
@@ -127,6 +105,27 @@ class DockerHubLimitCollector():
             prometheus_metric = Metric(metric['name'], metric['description'], metric['type'])
             prometheus_metric.add_sample(metric['name'], value=metric['value'], labels=labels)
             yield prometheus_metric
+
+    @staticmethod
+    def _get_token():
+        '''Get Docker Hub Token'''
+        if DOCKERHUB_USERNAME and DOCKERHUB_PASSWORD:
+            auth = (DOCKERHUB_USERNAME.lower(), DOCKERHUB_PASSWORD)
+            request = requests.get(TOKEN_URL, auth=auth)
+            if request.status_code == 401:
+                logging.error("Invalid Docker Hub Credentials !")
+                sys.exit(1)
+        else:
+            request = requests.get(TOKEN_URL)
+        token = request.json()['token']
+        logging.debug("TOKEN : %s", token)
+        return token
+
+    @staticmethod
+    def _parse_limit(value):
+        '''Extract Limit & Interval From Header'''
+        limit, interval = value.split(';')
+        return limit, interval.replace('w=', '')
 
 if __name__ == '__main__':
     logging.info("Starting Docker Hub Limit Exporter on port %s.", DOCKERHUB_LIMIT_EXPORTER_PORT)
