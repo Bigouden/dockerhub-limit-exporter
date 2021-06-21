@@ -103,7 +103,10 @@ class DockerHubLimitCollector():
     def collect(self):
         '''Collect Prometheus Metrics'''
         limits = self.get_limits()
-        labels = {'job': DOCKERHUB_LIMIT_EXPORTER_NAME}
+        if DOCKERHUB_USERNAME and DOCKERHUB_PASSWORD:
+            labels = {'job': DOCKERHUB_LIMIT_EXPORTER_NAME, 'account': DOCKERHUB_USERNAME.lower()}
+        else:
+            labels = {'job': DOCKERHUB_LIMIT_EXPORTER_NAME, 'account': 'anonymous'}
         metrics = []
         for key, value in limits.items():
             if key in [i['name'] for i in HEADERS]:
