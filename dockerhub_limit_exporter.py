@@ -50,8 +50,8 @@ except ValueError:
 IMAGE = "ratelimitpreview/test"
 DOCKERHUB_USERNAME = os.environ.get('DOCKERHUB_USERNAME')
 DOCKERHUB_PASSWORD = os.environ.get('DOCKERHUB_PASSWORD')
-REGISTRY_URL = "https://registry-1.docker.io/v2/%s/manifests/latest" % IMAGE
-TOKEN_URL = "https://auth.docker.io/token?service=registry.docker.io&scope=repository:%s:pull" % IMAGE
+REGISTRY_URL = f"https://registry-1.docker.io/v2/{IMAGE}/manifests/latest"
+TOKEN_URL = f"https://auth.docker.io/token?service=registry.docker.io&scope=repository:{IMAGE}:pull"
 
 # REGISTRY Configuration
 REGISTRY.unregister(PROCESS_COLLECTOR)
@@ -67,14 +67,14 @@ class DockerHubLimitCollector():
     def get_limits(self):
         '''Get Docker Hub Limits'''
         limits = {}
-        headers = {'Authorization': 'Bearer %s' % self._get_token()}
+        headers = {'Authorization': f'Bearer {self._get_token()}'}
         # Fetch Headers With HEAD Request & Avoid Pull Count
         request = requests.head(REGISTRY_URL, headers=headers)
         for key, value in request.headers.items():
             if key in [i['name'] for i in HEADERS]:
                 limit, interval = self._parse_limit(value)
                 limits[key] = limit
-                limits['%s-interval' % key] = interval
+                limits[f'{key}-interval'] = interval
         logging.info(limits)
         return limits
 
@@ -93,7 +93,7 @@ class DockerHubLimitCollector():
                 description = [i['description'] for i in HEADERS if key == i['name']][0]
                 metric_type = [i['type'] for i in HEADERS if key == i['name']][0]
                 if metric_type in ['counter', 'gauge', 'histogram', 'summary']:
-                    metrics.append({'name': 'dockerhub_%s' % key.lower().replace('-', '_'),
+                    metrics.append({'name': f'dockerhub_{key.lower().replace("-", "_")}',
                                     'value': int(value),
                                     'description': description,
                                     'type': metric_type})
