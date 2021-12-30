@@ -93,7 +93,7 @@ class DockerHubLimitCollector():
                 description = [i['description'] for i in HEADERS if key == i['name']][0]
                 metric_type = [i['type'] for i in HEADERS if key == i['name']][0]
                 if metric_type in ['counter', 'gauge', 'histogram', 'summary']:
-                    metrics.append({'name': f'dockerhub_{key.lower().replace('-', '_')}',
+                    metrics.append({'name': f'dockerhub_{key.lower().replace("-", "_")}',
                                     'value': int(value),
                                     'description': description,
                                     'type': metric_type})
