@@ -52,7 +52,7 @@ DOCKERHUB_USERNAME = os.environ.get('DOCKERHUB_USERNAME')
 DOCKERHUB_PASSWORD = os.environ.get('DOCKERHUB_PASSWORD')
 REGISTRY_URL = f"https://registry-1.docker.io/v2/{IMAGE}/manifests/latest"
 TOKEN_URL = f"https://auth.docker.io/token?service=registry.docker.io&scope=repository:{IMAGE}:pull"
-MAX_FALSE_POSITIVE = 5
+MAX_FALSE_POSITIVE = 10
 
 # REGISTRY Configuration
 REGISTRY.unregister(PROCESS_COLLECTOR)
@@ -88,8 +88,8 @@ class DockerHubLimitCollector():
         limits = self.get_limits()
         if self.last_ratelimit_remaining != limits['ratelimit-remaining']:
             while limits['ratelimit-remaining'] == limits['ratelimit-limit'] and iterate < MAX_FALSE_POSITIVE:
-                limits = self.get_limits()
                 iterate += 1
+                limits = self.get_limits()
         self.last_ratelimit_remaining = limits['ratelimit-remaining']
         logging.info(limits)
         if DOCKERHUB_USERNAME and DOCKERHUB_PASSWORD:
