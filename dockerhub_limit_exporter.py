@@ -148,7 +148,7 @@ if __name__ == '__main__':
         logging.info("Mode : ANONYMOUS.")
     # Start Prometheus HTTP Server
     start_http_server(DOCKERHUB_LIMIT_EXPORTER_PORT)
-    # Init DockerHuLimit Collector
+    # Init DockerHubLimit Collector
     REGISTRY.register(DockerHubLimitCollector())
     # Loop Infinity
     while True:
