@@ -52,6 +52,7 @@ DOCKERHUB_USERNAME = os.environ.get('DOCKERHUB_USERNAME')
 DOCKERHUB_PASSWORD = os.environ.get('DOCKERHUB_PASSWORD')
 REGISTRY_URL = f"https://registry-1.docker.io/v2/{IMAGE}/manifests/latest"
 TOKEN_URL = f"https://auth.docker.io/token?service=registry.docker.io&scope=repository:{IMAGE}:pull"
+MAX_FALSE_POSITIVE = 5
 
 # REGISTRY Configuration
 REGISTRY.unregister(PROCESS_COLLECTOR)
@@ -62,7 +63,10 @@ REGISTRY.unregister(REGISTRY._names_to_collectors['python_gc_objects_collected_t
 class DockerHubLimitCollector():
     '''Docker Hub Limit Collector Class'''
     def __init__(self):
-        return
+        if DOCKERHUB_USERNAME and DOCKERHUB_PASSWORD:
+            self.last_ratelimit_remaining = 200
+        else:
+            self.last_ratelimit_remaining = 100
 
     def get_limits(self):
         '''Get Docker Hub Limits'''
@@ -75,12 +79,19 @@ class DockerHubLimitCollector():
                 limit, interval = self._parse_limit(value)
                 limits[key] = limit
                 limits[f'{key}-interval'] = interval
-        logging.info(limits)
+        logging.debug(limits)
         return limits
 
     def collect(self):
         '''Collect Prometheus Metrics'''
+        iterate = 0
         limits = self.get_limits()
+        if self.last_ratelimit_remaining != limits['ratelimit-remaining']:
+            while limits['ratelimit-remaining'] == limits['ratelimit-limit'] or iterate < MAX_FALSE_POSITIVE:
+                limits = self.get_limits()
+                iterate += 1
+        self.last_ratelimit_remaining = limits['ratelimit-remaining']
+        logging.info(limits)
         if DOCKERHUB_USERNAME and DOCKERHUB_PASSWORD:
             labels = {'job': DOCKERHUB_LIMIT_EXPORTER_NAME,
                       'dockerhub_username': DOCKERHUB_USERNAME.lower()}
@@ -137,7 +148,7 @@ if __name__ == '__main__':
         logging.info("Mode : ANONYMOUS.")
     # Start Prometheus HTTP Server
     start_http_server(DOCKERHUB_LIMIT_EXPORTER_PORT)
-    # Init LinkyCollector
+    # Init DockerHuLimit Collector
     REGISTRY.register(DockerHubLimitCollector())
     # Loop Infinity
     while True:
