@@ -88,8 +88,8 @@ class DockerHubLimitCollector():
         limits = self.get_limits()
         if self.last_ratelimit_remaining != limits['ratelimit-remaining']:
             while limits['ratelimit-remaining'] == limits['ratelimit-limit'] and iterate < MAX_FALSE_POSITIVE:
-                limits = self.get_limits()
                 iterate += 1
+                limits = self.get_limits()
         self.last_ratelimit_remaining = limits['ratelimit-remaining']
         logging.info(limits)
         if DOCKERHUB_USERNAME and DOCKERHUB_PASSWORD:
