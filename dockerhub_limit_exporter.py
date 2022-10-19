@@ -87,7 +87,7 @@ class DockerHubLimitCollector():
         iterate = 0
         limits = self.get_limits()
         if self.last_ratelimit_remaining != limits['ratelimit-remaining']:
-            while limits['ratelimit-remaining'] == limits['ratelimit-limit'] or iterate < MAX_FALSE_POSITIVE:
+            while limits['ratelimit-remaining'] == limits['ratelimit-limit'] and iterate < MAX_FALSE_POSITIVE:
                 limits = self.get_limits()
                 iterate += 1
         self.last_ratelimit_remaining = limits['ratelimit-remaining']
