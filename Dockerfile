@@ -18,8 +18,7 @@ RUN apk add --no-cache --update \
     && rm -rf \
         /root/.cache \
         /tmp/* \
-        /var/cache/* \
-    && chmod +x /entrypoint.sh
+        /var/cache/*
 COPY --chown=${USERNAME}:${USERNAME} --chmod=600 dockerhub_limit_exporter.py ${VIRTUAL_ENV}
 COPY --chown=${USERNAME}:${USERNAME} --chmod=600 entrypoint.sh /
 USER ${USERNAME}
