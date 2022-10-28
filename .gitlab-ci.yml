@@ -29,5 +29,4 @@ Prometheus Exporter:
   stage: Test
   extends: .services
   script:
-    - curl http://$CONTAINER_TEST_NAME:8123
-
+    - curl http://$CI_PROJECT_NAME:8123
