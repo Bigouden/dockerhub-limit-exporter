@@ -129,7 +129,6 @@ class DockerHubLimitCollector():
         else:
             request = requests.get(TOKEN_URL)
         token = request.json()['token']
-        logging.debug("TOKEN : %s", token)
         return token
 
     @staticmethod

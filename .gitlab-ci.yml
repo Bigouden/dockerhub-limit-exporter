@@ -1,14 +1,14 @@
 include:
   - project: 'Bigouden/gitlab-ci-templates'
     file: '.gitlab-ci-docker.yml'
-
-variables:
-  CONTAINER_CLIENT_IMAGE: alpine:latest
+  - project: 'Bigouden/gitlab-ci-templates'
+    file: '.gitlab-ci-prometheus.yml'
 
 stages:
   - Quality
-  - Build
   - Security
+  - Build
+  - Test
   - Inspect
   - Release
   - Clean
