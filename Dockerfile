@@ -22,7 +22,7 @@ RUN apk add --no-cache --update \
     && chmod +x /entrypoint.sh
 COPY --chown=${USERNAME}:${USERNAME} --chmod=600 dockerhub_limit_exporter.py ${VIRTUAL_ENV}
 COPY --chown=${USERNAME}:${USERNAME} --chmod=600 entrypoint.sh /
+USER ${USERNAME}
 WORKDIR ${VIRTUAL_ENV}
 HEALTHCHECK CMD nc -vz localhost ${DOCKERHUB_LIMIT_EXPORTER_PORT} || exit 1
-USER ${USERNAME}
 ENTRYPOINT ["/entrypoint.sh"]
