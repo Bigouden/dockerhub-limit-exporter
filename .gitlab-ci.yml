@@ -5,10 +5,29 @@ include:
 variables:
   CONTAINER_CLIENT_IMAGE: alpine:latest
 
+.services:
+  services:
+    - name: $CONTAINER_TEST_IMAGE
+      alias: dockerhub-limit-exporter
+  image: $CONTAINER_CLIENT_IMAGE
+  before_script:
+    - apk add --no-cache --update curl
+  variables:
+    GIT_STRATEGY: none
+  dependencies: []
+
 stages:
   - Quality
   - Security
   - Build
+  - Test
   - Inspect
   - Release
   - Clean
+
+Prometheus Exporter:
+  stage: Test
+  extends: .services
+  script:
+    - curl http://$CONTAINER_TEST_NAME:8123
+
