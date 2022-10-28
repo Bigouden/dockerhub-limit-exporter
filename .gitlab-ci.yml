@@ -7,8 +7,8 @@ variables:
 
 stages:
   - Quality
-  - Build
   - Security
+  - Build
   - Inspect
   - Release
   - Clean
