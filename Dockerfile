@@ -24,4 +24,5 @@ COPY --chown=${USERNAME}:${USERNAME} --chmod=600 dockerhub_limit_exporter.py ${V
 COPY --chown=${USERNAME}:${USERNAME} --chmod=600 entrypoint.sh /
 WORKDIR ${VIRTUAL_ENV}
 HEALTHCHECK CMD nc -vz localhost ${DOCKERHUB_LIMIT_EXPORTER_PORT} || exit 1
+USER ${USERNAME}
 ENTRYPOINT ["/entrypoint.sh"]
