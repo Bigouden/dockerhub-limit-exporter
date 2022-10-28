@@ -14,13 +14,13 @@ RUN xargs -a /apk_packages apk add --no-cache --update \
     && python3 -m venv ${VIRTUAL_ENV} \
     && pip install --no-cache-dir --no-dependencies --no-binary :all: -r pip_packages \
     && pip uninstall -y setuptools pip \
-    && useradd -l -u ${UID} -U -s /bin/bash ${USERNAME} \
+    && useradd -l -u ${UID} -U -s /bin/sh ${USERNAME} \
     && rm -rf \
         /root/.cache \
         /tmp/* \
         /var/cache/*
-COPY --chown=${USERNAME}:${USERNAME} --chmod=600 dockerhub_limit_exporter.py ${VIRTUAL_ENV}
-COPY --chown=${USERNAME}:${USERNAME} --chmod=600 entrypoint.sh /
+COPY --chown=${USERNAME}:${USERNAME} --chmod=500 dockerhub_limit_exporter.py ${VIRTUAL_ENV}
+COPY --chown=${USERNAME}:${USERNAME} --chmod=500 entrypoint.sh /
 USER ${USERNAME}
 WORKDIR ${VIRTUAL_ENV}
 HEALTHCHECK CMD nc -vz localhost ${DOCKERHUB_LIMIT_EXPORTER_PORT} || exit 1
