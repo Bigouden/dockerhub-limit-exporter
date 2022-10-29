@@ -3,6 +3,7 @@ LABEL maintainer="Thomas GUIRRIEC <thomas@guirriec.fr>"
 ENV DOCKERHUB_LIMIT_EXPORTER_PORT=8123
 ENV DOCKERHUB_LIMIT_EXPORTER_LOGLEVEL='INFO'
 ENV DOCKERHUB_LIMIT_EXPORTER_NAME='dockerhub-limit-exporter'
+ENV SCRIPT='dockerhub_limit_exporter.py'
 ENV USERNAME="exporter"
 ENV UID="1000"
 ENV GID="1000"
@@ -19,7 +20,7 @@ RUN xargs -a /apk_packages apk add --no-cache --update \
         /root/.cache \
         /tmp/* \
         /var/cache/*
-COPY --chown=${USERNAME}:${USERNAME} --chmod=500 dockerhub_limit_exporter.py ${VIRTUAL_ENV}
+COPY --chown=${USERNAME}:${USERNAME} --chmod=500 ${SCRIPT} ${VIRTUAL_ENV}
 COPY --chown=${USERNAME}:${USERNAME} --chmod=500 entrypoint.sh /
 USER ${USERNAME}
 WORKDIR ${VIRTUAL_ENV}
