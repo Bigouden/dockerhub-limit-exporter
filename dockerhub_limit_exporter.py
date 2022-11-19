@@ -7,7 +7,9 @@ import logging
 import os
 import sys
 import time
+from datetime import datetime
 import requests
+import pytz
 from prometheus_client.core import REGISTRY, Metric
 from prometheus_client import start_http_server, PROCESS_COLLECTOR, PLATFORM_COLLECTOR
 
@@ -15,6 +17,7 @@ DOCKERHUB_LIMIT_EXPORTER_LOGLEVEL = os.environ.get('DOCKERHUB_LIMIT_EXPORTER_LOG
                                                    'INFO').upper()
 DOCKERHUB_LIMIT_EXPORTER_NAME = os.environ.get('DOCKERHUB_LIMIT_EXPORTER_NAME',
                                                'dockerhub-limit-exporter')
+DOCKERHUB_LIMIT_EXPORTER_TZ = os.environ.get('TZ', 'Europe/Paris')
 
 HEADERS = [
    {'name': 'ratelimit-limit',
@@ -27,24 +30,37 @@ HEADERS = [
 
 # Logging Configuration
 try:
+    pytz.timezone(DOCKERHUB_LIMIT_EXPORTER_TZ)
+    logging.Formatter.converter = lambda *args: \
+                                  datetime.now(tz=\
+                                  pytz.timezone(DOCKERHUB_LIMIT_EXPORTER_TZ)).timetuple()
     logging.basicConfig(stream=sys.stdout,
                         format='%(asctime)s - %(levelname)s - %(message)s',
                         datefmt='%d/%m/%Y %H:%M:%S',
                         level=DOCKERHUB_LIMIT_EXPORTER_LOGLEVEL)
+except pytz.exceptions.UnknownTimeZoneError:
+    logging.Formatter.converter = lambda *args: \
+                                  datetime.now(tz=pytz.timezone('Europe/Paris')).timetuple()
+    logging.basicConfig(stream=sys.stdout,
+                        format='%(asctime)s - %(levelname)s - %(message)s',
+                        datefmt='%d/%m/%Y %H:%M:%S',
+                        level='INFO')
+    logging.error("TZ invalid : %s !", DOCKERHUB_LIMIT_EXPORTER_TZ)
+    os._exit(1)
 except ValueError:
     logging.basicConfig(stream=sys.stdout,
                         format='%(asctime)s - %(levelname)s - %(message)s',
                         datefmt='%d/%m/%Y %H:%M:%S',
                         level='INFO')
     logging.error("DOCKERHUB_LIMIT_EXPORTER_LOGLEVEL invalid !")
-    sys.exit(1)
+    os._exit(1)
 
 # Exporter Configuration
 try:
     DOCKERHUB_LIMIT_EXPORTER_PORT = int(os.environ.get('DOCKERHUB_LIMIT_EXPORTER_PORT', '8123'))
 except ValueError:
     logging.error("DOCKERHUB_LIMIT_EXPORTER_PORT must be int !")
-    sys.exit(1)
+    os._exit(1)
 
 # Docker Hub Configuration
 IMAGE = "ratelimitpreview/test"
@@ -125,7 +141,7 @@ class DockerHubLimitCollector():
             request = requests.get(TOKEN_URL, auth=auth)
             if request.status_code == 401:
                 logging.error("Invalid Docker Hub Credentials !")
-                sys.exit(1)
+                os._exit(1)
         else:
             request = requests.get(TOKEN_URL)
         token = request.json()['token']
