@@ -6,15 +6,15 @@ Exporter Prometheus des statistiques de récupération d'images sur Docker Hub.
 
 ## Variable d'environement
 
-| Variable d'environement | Description | Valeur par défaut |
-| ------ | ------ | ------ |
-| DOCKERHUB_LIMIT_EXPORTER_LOGLEVEL | Niveau de verbosité de l'exporter | INFO |
-| DOCKERHUB_LIMIT_EXPORTER_NAME | Valeur 'job' des métriques remontées | dockerhub-limit-exporter |
-| DOCKERHUB_LIMIT__EXPORTER_PORT | Port d'écoute de l'exporter | 8123 |
-| DOCKERHUB_USERNAME | Utilisateur Docker Hub | Vide |
-| DOCKERHUB_PASSWORD | Mot de passe Docker Hub | Vide |
-| HTTP_PROXY | Proxy HTTP  | Vide |
-| HTTPS_PROXY | Proxy HTTPS  | Vide |
+| Variable d'environement           | Description                          | Valeur par défaut        |
+|-----------------------------------|--------------------------------------|--------------------------|
+| DOCKERHUB_LIMIT_EXPORTER_LOGLEVEL | Niveau de verbosité de l'exporter    | INFO                     |
+| DOCKERHUB_LIMIT_EXPORTER_NAME     | Valeur 'job' des métriques remontées | dockerhub-limit-exporter |
+| DOCKERHUB_LIMIT__EXPORTER_PORT    | Port d'écoute de l'exporter          | 8123                     |
+| DOCKERHUB_USERNAME                | Utilisateur Docker Hub               | Vide                     |
+| DOCKERHUB_PASSWORD                | Mot de passe Docker Hub              | Vide                     |
+| HTTP_PROXY                        | Proxy HTTP                           | Vide                     |
+| HTTPS_PROXY                       | Proxy HTTPS                          | Vide                     |
 
 ## Format des métriques
 
@@ -32,7 +32,7 @@ dockerhub_ratelimit_remaining{dockerhub_username="bigouden",job="dockerhub-limit
 
 ## Lancement de l'exporter
 
-L'exporter est "packagé" sous forme de conteneur Docker. 
+L'exporter est "packagé" sous forme de conteneur Docker.
 
 Une fois le conteneur construit, il peut être lancé comme suit :
 
@@ -44,4 +44,4 @@ Un tableau de bord Grafana est disponible dans le répertoire **grafana** et per
 
 _Capture d'écran :_
 
-![capture d'écran Grafana](grafana/grafana.png "Capture d'écran Grafana")
+![capture d'écran Grafana](grafana/grafana.png "Capture d'écran Grafana")[capture d'écran Grafana](grafana/grafana.png "Capture d'écran Grafana")

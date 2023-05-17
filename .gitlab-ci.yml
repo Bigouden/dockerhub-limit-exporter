@@ -1,8 +1,9 @@
+---
 include:
-  - project: 'Bigouden/gitlab-ci-templates'
-    file: '.gitlab-ci-docker.yml'
-  - project: 'Bigouden/gitlab-ci-templates'
-    file: '.gitlab-ci-prometheus.yml'
+  - project: "Bigouden/gitlab-ci-templates"
+    file: ".gitlab-ci-docker.yml"
+  - project: "Bigouden/gitlab-ci-templates"
+    file: ".gitlab-ci-prometheus.yml"
 
 stages:
   - Quality
