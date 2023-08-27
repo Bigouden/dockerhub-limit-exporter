@@ -7,13 +7,17 @@
 import logging
 import os
 import sys
+import threading
 import time
 from datetime import datetime
+from typing import Callable
+from wsgiref.simple_server import make_server
 
 import pytz
 import requests
-from prometheus_client import PLATFORM_COLLECTOR, PROCESS_COLLECTOR, start_http_server
-from prometheus_client.core import REGISTRY, Metric
+from prometheus_client import PLATFORM_COLLECTOR, PROCESS_COLLECTOR
+from prometheus_client.core import REGISTRY, CollectorRegistry, Metric
+from prometheus_client.exposition import _bake_output, parse_qs
 
 DOCKERHUB_LIMIT_EXPORTER_LOGLEVEL = os.environ.get(
     "DOCKERHUB_LIMIT_EXPORTER_LOGLEVEL", "INFO"
@@ -35,6 +39,64 @@ HEADERS = [
         "type": "gauge",
     },
 ]
+
+
+def make_wsgi_app(
+    registry: CollectorRegistry = REGISTRY, disable_compression: bool = False
+) -> Callable:
+    """Create a WSGI app which serves the metrics from a registry."""
+
+    def prometheus_app(environ, start_response):
+        # Prepare parameters
+        accept_header = environ.get("HTTP_ACCEPT")
+        accept_encoding_header = environ.get("HTTP_ACCEPT_ENCODING")
+        params = parse_qs(environ.get("QUERY_STRING", ""))
+        headers = [
+            ("Server", ""),
+            ("Cache-Control", "no-cache, no-store, must-revalidate, max-age=0"),
+            ("Pragma", "no-cache"),
+            ("Expires", "0"),
+            ("X-Content-Type-Options", "nosniff"),
+        ]
+        if environ["PATH_INFO"] == "/":
+            status = "301 Moved Permanently"
+            headers.append(("Location", "/metrics"))
+            output = b""
+        elif environ["PATH_INFO"] == "/favicon.ico":
+            status = "200 OK"
+            output = b""
+        elif environ["PATH_INFO"] == "/metrics":
+            status, tmp_headers, output = _bake_output(
+                registry,
+                accept_header,
+                accept_encoding_header,
+                params,
+                disable_compression,
+            )
+            headers += tmp_headers
+        else:
+            status = "404 Not Found"
+            output = b""
+        start_response(status, headers)
+        return [output]
+
+    return prometheus_app
+
+
+def start_wsgi_server(
+    port: int,
+    addr: str = "0.0.0.0",  # nosec B104
+    registry: CollectorRegistry = REGISTRY,
+) -> None:
+    """Starts a WSGI server for prometheus metrics as a daemon thread."""
+    app = make_wsgi_app(registry)
+    httpd = make_server(addr, port, app)
+    thread = threading.Thread(target=httpd.serve_forever)
+    thread.daemon = True
+    thread.start()
+
+
+start_http_server = start_wsgi_server
 
 # Logging Configuration
 try:
