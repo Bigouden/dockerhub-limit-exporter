@@ -17,7 +17,7 @@ import pytz
 import requests
 from prometheus_client import PLATFORM_COLLECTOR, PROCESS_COLLECTOR
 from prometheus_client.core import REGISTRY, CollectorRegistry, Metric
-from prometheus_client.exposition import _bake_output, parse_qs
+from prometheus_client.exposition import _bake_output, _SilentHandler, parse_qs
 
 DOCKERHUB_LIMIT_EXPORTER_LOGLEVEL = os.environ.get(
     "DOCKERHUB_LIMIT_EXPORTER_LOGLEVEL", "INFO"
@@ -90,7 +90,7 @@ def start_wsgi_server(
 ) -> None:
     """Starts a WSGI server for prometheus metrics as a daemon thread."""
     app = make_wsgi_app(registry)
-    httpd = make_server(addr, port, app)
+    httpd = make_server(addr, port, app, handler_class=_SilentHandler)
     thread = threading.Thread(target=httpd.serve_forever)
     thread.daemon = True
     thread.start()
