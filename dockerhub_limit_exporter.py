@@ -57,6 +57,9 @@ def make_wsgi_app(
             ("Pragma", "no-cache"),
             ("Expires", "0"),
             ("X-Content-Type-Options", "nosniff"),
+            ("Cross-Origin-Resource-Policy", "same-origin"),
+            ("Cross-Origin-Embedder-Policy", "require-corp"),
+            ("Cross-Origin-Opener-Policy", "same-site"),
         ]
         if environ["PATH_INFO"] == "/":
             status = "301 Moved Permanently"
